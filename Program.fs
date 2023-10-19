@@ -9,6 +9,8 @@ module Program =
     open SuaveAPI.UserRepository
     open SuaveAPI.VstopRepository
     open SuaveAPI.VstopService
+    open EnvVariable.EnvVar
+    open System
 
     [<EntryPoint>]
     let main argv =
