@@ -25,6 +25,10 @@ module Program =
                   UpdateUserById = UserRepository.updateUserById
                   DeleteUser = UserRepository.deleteUser }
 
+        let app =
+            choose
+                [ GET >=> path "/vstops" >=> vstopActions
+                  GET >=> path "/users" >=> userActions ]
 
-        startWebServer defaultConfig vstopActions
+        startWebServer defaultConfig app
         0
