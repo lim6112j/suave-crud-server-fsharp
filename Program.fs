@@ -1,5 +1,7 @@
 ﻿namespace SuaveAPI
 
+open FSharp.Configuration
+
 module Program =
     open Suave.Web
     open Suave
@@ -12,9 +14,25 @@ module Program =
     open EnvVariable.EnvVar
     open System
 
+    [<Literal>]
+    let appSettingsPath = __SOURCE_DIRECTORY__ + "/app.config"
+
+    type Settings = AppSettings<appSettingsPath>
+
     [<EntryPoint>]
     let main argv =
+        // environment variable
         printfn "%s" (Environment.GetEnvironmentVariable "PATH")
+        // app settings (app.config)
+
+        printfn "%s" Settings.ConfigFileName
+
+        let configPath =
+            System.IO.Path.Combine [| __SOURCE_DIRECTORY__; "bin"; "Debug"; "net7.0"; "suave-crud-server" |]
+
+        printfn "%s" configPath
+        Settings.SelectExecutableFile configPath
+        printfn "%s" Settings.ConnectionStrings.LocalSqlServer
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
         let userActions =
