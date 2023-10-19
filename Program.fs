@@ -14,25 +14,17 @@ module Program =
     open EnvVariable.EnvVar
     open System
 
-    [<Literal>]
-    let appSettingsPath = __SOURCE_DIRECTORY__ + "/app.config"
-
-    type Settings = AppSettings<appSettingsPath>
+    // type Settings = AppSettings<"app.config">
+    type YamlSettings = YamlConfig<"config.yaml">
 
     [<EntryPoint>]
     let main argv =
         // environment variable
         printfn "%s" (Environment.GetEnvironmentVariable "PATH")
         // app settings (app.config)
+        let config = YamlSettings()
+        printfn "%s" config.DB.ConnectionString
 
-        printfn "%s" Settings.ConfigFileName
-
-        let configPath =
-            System.IO.Path.Combine [| __SOURCE_DIRECTORY__; "bin"; "Debug"; "net7.0"; "suave-crud-server" |]
-
-        printfn "%s" configPath
-        Settings.SelectExecutableFile configPath
-        printfn "%s" Settings.ConnectionStrings.LocalSqlServer
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
         let userActions =
