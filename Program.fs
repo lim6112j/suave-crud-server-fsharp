@@ -26,5 +26,5 @@ module Program =
                   DeleteUser = UserRepository.deleteUser }
 
 
-        startWebServer defaultConfig userActions
+        startWebServer defaultConfig vstopActions
         0

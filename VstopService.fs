@@ -19,6 +19,6 @@ module VstopService =
         >=> Writers.setMimeType "application/json"
 
     let vstopHandle nameOfAction action =
-        let listAll = warbler (fun _ -> action.ListVstops() |> JSON)
+        let listAll = action.ListVstops() |> JSON
         let actionPath = "/" + nameOfAction
         choose [ path actionPath >=> choose [ GET >=> listAll ] ]
