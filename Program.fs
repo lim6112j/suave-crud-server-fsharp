@@ -14,7 +14,7 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
-
+        printfn "%s" (Environment.GetEnvironmentVariable "PATH")
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
         let userActions =
