@@ -7,6 +7,7 @@ module Program =
     open Suave
     open Suave.Filters
     open Suave.Operators
+    open Suave.Successful
     open SuaveAPI.UserService
     open SuaveAPI.UserRepository
     open SuaveAPI.VstopRepository
@@ -19,8 +20,17 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
+        // webpart
+        let sleep milliseconds message : WebPart =
+            fun (context: HttpContext) ->
+                async {
+                    do! Async.Sleep(milliseconds: int)
+                    return! OK message context
+                }
+
+        printfn "%A" (sleep 10000 "hello world")
         // environment variable
-        printfn "%s" (Environment.GetEnvironmentVariable "PATH")
+        // printfn "%s" (Environment.GetEnvironmentVariable "PATH")
         // app settings (app.config)
         let config = YamlSettings()
         printfn "%s" config.DB.ConnectionString
