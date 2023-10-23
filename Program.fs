@@ -12,6 +12,8 @@ module Program =
     open SuaveAPI.UserRepository
     open SuaveAPI.VstopRepository
     open SuaveAPI.VstopService
+    open SuaveAPI.APIHelper
+    open SuaveAPI.APIService
     open EnvVariable.EnvVar
     open System
 
@@ -29,12 +31,13 @@ module Program =
                 }
 
         printfn "%A" (sleep 10000 "hello world")
+
         // environment variable
         // printfn "%s" (Environment.GetEnvironmentVariable "PATH")
         // app settings (app.config)
         let config = YamlSettings()
         printfn "%s" config.DB.ConnectionString
-
+        let osrmActions = osrmHandle "osrm" { OSRMResponse = APIHelper.apiCall }
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
         let userActions =
@@ -50,7 +53,8 @@ module Program =
         let app =
             choose
                 [ GET >=> path "/vstops" >=> vstopActions
-                  GET >=> path "/users" >=> userActions ]
+                  GET >=> path "/users" >=> userActions
+                  GET >=> path "/osrm" >=> osrmActions ]
 
         startWebServer defaultConfig app
         0
