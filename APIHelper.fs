@@ -82,6 +82,34 @@ module APIHelper =
                 | _ -> []
 
             // printfn "%A" (traversePair waypoints)
+            /// <summary>
+            /// waypoints start, end and new point as origin
+            /// calculate vector theta
+            /// </summary>
+            let getTheta pointsPair origin =
+                let origin = (float origin.Lat, float origin.Lng)
+                let fstPoint = (float (fst pointsPair).Lat, float (fst pointsPair).Lng)
+                let sndPoint = (float (snd pointsPair).Lat, float (snd pointsPair).Lng)
+                let fstVectorOrigin = (fst fstPoint - fst origin, snd fstPoint - snd origin)
+                let sndVectorOrigin = (fst sndPoint - fst origin, snd sndPoint - snd origin)
+
+
+                let thetaOrigin =
+                    acos (
+                        ((fst fstVectorOrigin) * (fst sndVectorOrigin)
+                         + snd fstVectorOrigin * snd sndVectorOrigin)
+                        / (sqrt (
+                            fst fstVectorOrigin * fst fstVectorOrigin
+                            + snd fstVectorOrigin * snd fstVectorOrigin
+                           )
+                           * sqrt (
+                               fst sndVectorOrigin * fst sndVectorOrigin
+                               + snd sndVectorOrigin * snd sndVectorOrigin
+                           ))
+                    )
+
+                thetaOrigin
+
 
             /// <summary>
             /// mobble beta-skeleton
@@ -90,47 +118,8 @@ module APIHelper =
             let thetas (wps: list<Loc>) (dmds: list<Loc>) =
                 traversePair wps
                 |> Seq.map (fun pair ->
-                    let origin = (float dmds[0].Lat, float dmds[0].Lng)
-                    let destination = (float dmds[1].Lat, float dmds[1].Lng)
-                    let fstPoint = (float (fst pair).Lat, float (fst pair).Lng)
-                    let sndPoint = (float (snd pair).Lat, float (snd pair).Lng)
-                    let fstVectorOrigin = (fst fstPoint - fst origin, snd fstPoint - snd origin)
-                    let sndVectorOrigin = (fst sndPoint - fst origin, snd sndPoint - snd origin)
-
-                    let fstVectorDestination =
-                        (fst fstPoint - fst destination, snd fstPoint - snd destination)
-
-                    let sndVectorDestination =
-                        (fst sndPoint - fst destination, snd sndPoint - snd destination)
-
-                    let thetaOrigin =
-                        acos (
-                            ((fst fstVectorOrigin) * (fst sndVectorOrigin)
-                             + snd fstVectorOrigin * snd sndVectorOrigin)
-                            / (sqrt (
-                                fst fstVectorOrigin * fst fstVectorOrigin
-                                + snd fstVectorOrigin * snd fstVectorOrigin
-                               )
-                               * sqrt (
-                                   fst sndVectorOrigin * fst sndVectorOrigin
-                                   + snd sndVectorOrigin * snd sndVectorOrigin
-                               ))
-                        )
-
-                    let thetaDestination =
-                        acos (
-                            ((fst fstVectorDestination) * (fst sndVectorDestination)
-                             + snd fstVectorDestination * snd sndVectorDestination)
-                            / (sqrt (
-                                fst fstVectorDestination * fst fstVectorDestination
-                                + snd fstVectorDestination * snd fstVectorDestination
-                               )
-                               * sqrt (
-                                   fst sndVectorDestination * fst sndVectorDestination
-                                   + snd sndVectorDestination * snd sndVectorDestination
-                               ))
-                        )
-
+                    let thetaOrigin = getTheta pair dmds[0]
+                    let thetaDestination = getTheta pair dmds[1]
                     (thetaOrigin * 180.0 / Math.PI, thetaDestination * 180.0 / Math.PI))
 
             printfn "%A" (thetas waypoints demands)
