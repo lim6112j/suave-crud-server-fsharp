@@ -70,7 +70,7 @@ module APIHelper =
             let getCombinationOfWaypoints (wp: list<Loc>) (dmds: list<Loc>) =
                 seq {
                     for i in 0 .. wp.Length - 1 do
-                        for j in i + 1 .. wp.Length + dmds.Length - 2 do
+                        for j in i + 1 .. wp.Length do
                             let result = outsertAt i dmds[0] wp |> outsertAt j dmds[1]
                             printfn "%A" result
                             yield result
