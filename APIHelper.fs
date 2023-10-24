@@ -57,22 +57,28 @@ module APIHelper =
                 |> fun s -> s.Remove(s.Length - 1)
                 |> fun s -> apiHead + s + apiTail
 
-            let insertAt index newEl input =
+            let outsertAt index newEl input =
                 input
-                |> List.mapi (fun i el -> if i = index then [ newEl; el ] else [ el ])
+                |> List.mapi (fun i el -> if i = index then [ el; newEl ] else [ el ])
                 |> List.concat
 
-            let getCombinationOfWaypoints (wp: list<Loc>) =
+            /// <summary>
+            /// get combinational waypoints list for cost calculation ( Mobble algorithm )
+            /// number of waypoints = n+1 C r  (n : waypoints number, r : demands number)
+            /// e.g. 3 waypoints, 2 demands = 4 C 2 = 6 waypoints combination
+            /// </summary>
+            let getCombinationOfWaypoints (wp: list<Loc>) (dmds: list<Loc>) =
                 seq {
                     for i in 0 .. wp.Length - 1 do
-                        for j in i + 1 .. wp.Length - 1 do
-                            let result = insertAt i demands[0] wp |> insertAt j demands[1]
+                        for j in i + 1 .. wp.Length + dmds.Length - 2 do
+                            let result = outsertAt i dmds[0] wp |> outsertAt j dmds[1]
+                            printfn "%A" result
                             yield result
                 }
 
 
             let responses =
-                getCombinationOfWaypoints waypoints
+                getCombinationOfWaypoints waypoints demands
                 // |> Seq.map (fun x ->
                 //     printfn "%A" x
                 //     x)
