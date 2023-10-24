@@ -1,6 +1,7 @@
 namespace SuaveAPI
 
 open FSharp.Configuration
+open System
 open System.Net.Http
 open System.IO
 
@@ -62,17 +63,52 @@ module APIHelper =
                 |> List.mapi (fun i el -> if i = index then [ el; newEl ] else [ el ])
                 |> List.concat
 
+            ///
+            /// <summary>
+            /// [1,2,3,4] => [(1,2), (2,3), (3,4)]
+            /// vector계산을 위해 좌표를 페어로 만드는데 사용
+            /// </summary>
+            let rec traversePair (wps: list<Loc>) =
+                match wps with
+                | x :: y :: tail -> (x, y) :: traversePair (y :: tail)
+                | _ -> []
+
+            printfn "%A" (traversePair waypoints)
+
+            /// <summary>
+            /// mobble beta-skeleton
+            /// 2 vectors inner theta calculation (waypoints pair with demand point)
+            /// </summary>
+            let thetas (wps: list<Loc>) (dmds: list<Loc>) =
+                traversePair wps
+                |> Seq.map (fun pair ->
+                    let origin = (float dmds[0].Lat, float dmds[0].Lng)
+                    let fstPoint = (float (fst pair).Lat, float (fst pair).Lng)
+                    let sndPoint = (float (snd pair).Lat, float (snd pair).Lng)
+                    let fstVector = (fst fstPoint - fst origin, snd fstPoint - snd origin)
+                    let sndVector = (fst sndPoint - fst origin, snd sndPoint - snd origin)
+
+                    let theta =
+                        acos (
+                            ((fst fstVector) * (fst sndVector) + snd fstVector * snd sndVector)
+                            / (sqrt (fst fstVector * fst fstVector + snd fstVector * snd fstVector)
+                               * sqrt (fst sndVector * fst sndVector + snd sndVector * snd sndVector))
+                        )
+
+                    theta * 180.0 / Math.PI)
+
+            printfn "%A" (thetas waypoints demands)
+
             /// <summary>
             /// get combinational waypoints list for cost calculation ( Mobble algorithm )
             /// number of waypoints = n+1 C r  (n : waypoints number, r : demands number)
-            /// e.g. 3 waypoints, 2 demands = 4 C 2 = 6 waypoints combination
             /// </summary>
             let getCombinationOfWaypoints (wp: list<Loc>) (dmds: list<Loc>) =
                 seq {
                     for i in 0 .. wp.Length - 1 do
                         for j in i + 1 .. wp.Length do
                             let result = outsertAt i dmds[0] wp |> outsertAt j dmds[1]
-                            printfn "%A" result
+                            // printfn "%A" result
                             yield result
                 }
 
@@ -88,7 +124,8 @@ module APIHelper =
                 //     x)
                 |> Seq.map (fun r -> client.GetStringAsync(r))
                 |> Seq.map (fun r -> r.Result)
+                |> JSON
 
-            return responses |> JSON
+            return responses
         }
         |> Async.RunSynchronously
