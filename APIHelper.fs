@@ -88,21 +88,49 @@ module APIHelper =
                 traversePair wps
                 |> Seq.map (fun pair ->
                     let origin = (float dmds[0].Lat, float dmds[0].Lng)
+                    let destination = (float dmds[1].Lat, float dmds[1].Lng)
                     let fstPoint = (float (fst pair).Lat, float (fst pair).Lng)
                     let sndPoint = (float (snd pair).Lat, float (snd pair).Lng)
-                    let fstVector = (fst fstPoint - fst origin, snd fstPoint - snd origin)
-                    let sndVector = (fst sndPoint - fst origin, snd sndPoint - snd origin)
+                    let fstVectorOrigin = (fst fstPoint - fst origin, snd fstPoint - snd origin)
+                    let sndVectorOrigin = (fst sndPoint - fst origin, snd sndPoint - snd origin)
 
-                    let theta =
+                    let fstVectorDestination =
+                        (fst fstPoint - fst destination, snd fstPoint - snd destination)
+
+                    let sndVectorDestination =
+                        (fst sndPoint - fst destination, snd sndPoint - snd destination)
+
+                    let thetaOrigin =
                         acos (
-                            ((fst fstVector) * (fst sndVector) + snd fstVector * snd sndVector)
-                            / (sqrt (fst fstVector * fst fstVector + snd fstVector * snd fstVector)
-                               * sqrt (fst sndVector * fst sndVector + snd sndVector * snd sndVector))
+                            ((fst fstVectorOrigin) * (fst sndVectorOrigin)
+                             + snd fstVectorOrigin * snd sndVectorOrigin)
+                            / (sqrt (
+                                fst fstVectorOrigin * fst fstVectorOrigin
+                                + snd fstVectorOrigin * snd fstVectorOrigin
+                               )
+                               * sqrt (
+                                   fst sndVectorOrigin * fst sndVectorOrigin
+                                   + snd sndVectorOrigin * snd sndVectorOrigin
+                               ))
                         )
 
-                    theta * 180.0 / Math.PI)
+                    let thetaDestination =
+                        acos (
+                            ((fst fstVectorDestination) * (fst sndVectorDestination)
+                             + snd fstVectorDestination * snd sndVectorDestination)
+                            / (sqrt (
+                                fst fstVectorDestination * fst fstVectorDestination
+                                + snd fstVectorDestination * snd fstVectorDestination
+                               )
+                               * sqrt (
+                                   fst sndVectorDestination * fst sndVectorDestination
+                                   + snd sndVectorDestination * snd sndVectorDestination
+                               ))
+                        )
 
-            // printfn "%A" (thetas waypoints demands)
+                    (thetaOrigin * 180.0 / Math.PI, thetaDestination * 180.0 / Math.PI))
+
+            printfn "%A" (thetas waypoints demands)
 
             /// <summary>
             /// get combinational waypoints list for cost calculation ( Mobble algorithm )
