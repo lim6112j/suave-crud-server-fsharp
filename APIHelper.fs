@@ -10,6 +10,7 @@ open Newtonsoft.Json.Serialization
 open Suave
 open Suave.Successful
 open Suave.Operators
+open System.Text.RegularExpressions
 
 type Loc = { Lng: string; Lat: string }
 
@@ -146,12 +147,27 @@ module APIHelper =
                             yield result
                 }
 
+            let (|Regex|_|) pattern input =
+                let m = Regex.Match(input, pattern)
+
+                if m.Success then
+                    Some(List.tail [ for g in m.Groups -> g.Value ])
+                else
+                    None
+
+            let phone = "(444) 555-5555"
+
+            match phone with
+            | Regex @"\(([0-9]{3})\)[-. ]?([0-9]{3})[-. ]?([0-9]{4})" [ area; prefix; suffix ] ->
+                printfn "Area: %s, Prefix: %s, Suffix: %s" area prefix suffix
+            | _ -> printfn "Not a phone number"
 
             let responses =
                 getCombinationOfWaypoints waypoints demands
                 |> Seq.map (fun r -> getUrl (r))
                 |> Seq.map (fun r -> client.GetStringAsync(r))
                 |> Seq.map (fun r -> r.Result)
+                |> Seq.map (fun r -> r.Trim())
                 |> JSON
 
             return responses
