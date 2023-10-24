@@ -58,6 +58,11 @@ module APIHelper =
                 |> fun s -> s.Remove(s.Length - 1)
                 |> fun s -> apiHead + s + apiTail
 
+            /// <summary>
+            /// insert item behind of index, named as outersert not insert
+            /// [el: newEl] => behind of index
+            /// [newEl; el] => fore of index
+            /// </summary>
             let outsertAt index newEl input =
                 input
                 |> List.mapi (fun i el -> if i = index then [ el; newEl ] else [ el ])
@@ -73,7 +78,7 @@ module APIHelper =
                 | x :: y :: tail -> (x, y) :: traversePair (y :: tail)
                 | _ -> []
 
-            printfn "%A" (traversePair waypoints)
+            // printfn "%A" (traversePair waypoints)
 
             /// <summary>
             /// mobble beta-skeleton
@@ -97,7 +102,7 @@ module APIHelper =
 
                     theta * 180.0 / Math.PI)
 
-            printfn "%A" (thetas waypoints demands)
+            // printfn "%A" (thetas waypoints demands)
 
             /// <summary>
             /// get combinational waypoints list for cost calculation ( Mobble algorithm )
@@ -108,20 +113,13 @@ module APIHelper =
                     for i in 0 .. wp.Length - 1 do
                         for j in i + 1 .. wp.Length do
                             let result = outsertAt i dmds[0] wp |> outsertAt j dmds[1]
-                            // printfn "%A" result
                             yield result
                 }
 
 
             let responses =
                 getCombinationOfWaypoints waypoints demands
-                // |> Seq.map (fun x ->
-                //     printfn "%A" x
-                //     x)
                 |> Seq.map (fun r -> getUrl (r))
-                // |> Seq.map (fun x ->
-                //     printfn "%A" x
-                //     x)
                 |> Seq.map (fun r -> client.GetStringAsync(r))
                 |> Seq.map (fun r -> r.Result)
                 |> JSON
