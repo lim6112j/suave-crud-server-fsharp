@@ -1,6 +1,6 @@
 OSRM:
     Server:
-        Host: "http://localhost:5001/route/v1/driving/"
+        Host: http://localhost:5001/route/v1/driving/
         Tail: ?overview=false
 DB:
     ConnectionString: Data Source=server1;Initial Catalog=Database1;Integrated Security=SSPI;

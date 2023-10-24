@@ -37,6 +37,8 @@ module Program =
         // app settings (app.config)
         let config = YamlSettings()
         printfn "%s" config.DB.ConnectionString
+
+
         let osrmActions = osrmHandle "osrm" { OSRMResponse = APIHelper.apiCall }
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
