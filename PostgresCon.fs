@@ -6,7 +6,8 @@ open Npgsql.FSharp
 module PostgresCon =
     let connectionString: string =
         Sql.host "localhost"
-        |> Sql.database "mobble"
+        // |> Sql.database "mobble"
+        |> Sql.database "postgres"
         |> Sql.username "postgres"
         |> Sql.password ""
         |> Sql.port 5432

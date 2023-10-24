@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="EnvVar.fs" />
+    <Compile Include="./utils/utils.fs" />
     <Compile Include="PostgresCon.fs" />
     <Compile Include="APIHelper.fs" />
     <Compile Include="APIService.fs" />
