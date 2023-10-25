@@ -86,8 +86,13 @@ module Utils =
 
     let bind func optionInput =
         match optionInput with
-        | Success x -> func x
-        | Failure f -> f
+        | Success x -> Success(func x)
+        | Failure f -> Failure f
+
+    let unwrap optionInput =
+        match optionInput with
+        | Success x -> x
+        | Failure x -> $"Failed while processing with {x}"
 
     let getUTF8 (str: byte[]) =
         System.Text.Encoding.UTF8.GetString(str)

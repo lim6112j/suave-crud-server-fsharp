@@ -97,11 +97,9 @@ module OSRMRepository =
 
             let responses =
                 getOptimalWaypointsWithTheta waypoints demands
-                |> fun x ->
-                    match x with
-                    | Success x -> Success(getUrl x)
-                    | Failure f -> Failure $"Could not find optimal routes with {f}"
+                |> bind getUrl
                 |> bind getFromAsyncHttp
+                |> unwrap
                 |> fun s ->
                     printfn "%A" s
                     s
