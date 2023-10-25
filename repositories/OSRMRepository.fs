@@ -32,15 +32,33 @@ module OSRMRepository =
             /// <summary>
             /// mobble beta-skeleton
             /// 2 vectors inner theta calculation (waypoints pair with demand point)
+            ///
             /// </summary>
-            let thetas (wps: list<Loc>) (dmds: list<Loc>) =
+            let getOptimalWaypointsWithTheta (wps: list<Loc>) (dmds: list<Loc>) =
                 traversePair wps
-                |> Seq.map (fun pair ->
+                |> Seq.mapi (fun i pair ->
                     let thetaOrigin = getTheta pair dmds[0]
                     let thetaDestination = getTheta pair dmds[1]
-                    (thetaOrigin, thetaDestination))
+                    (thetaOrigin, thetaDestination, i))
+                |> Seq.map (fun pair ->
+                    printfn "%A" pair
+                    pair)
+                |> Seq.fold
+                    (fun acc pair ->
+                        match pair with
+                        | (x, y, i) when x > 90 -> outsertAt i dmds[0] acc
+                        // inserted item makes insertion point increased
+                        | (x, y, i) when y > 90 -> outsertAt (i + acc.Length - wps.Length) dmds[1] acc
+                        | _ -> acc)
+                    wps
+                |> fun waypoint ->
+                    let len = wps.Length + dmds.Length
 
-            printfn "%A" (thetas waypoints demands)
+                    match waypoint with
+                    | x when x.Length = len -> Success waypoint
+                    | x -> Failure x
+
+            printfn "%A" (getOptimalWaypointsWithTheta waypoints demands)
 
             /// <summary>
             /// get combinational waypoints list for cost calculation ( Mobble algorithm )
@@ -54,11 +72,19 @@ module OSRMRepository =
                             yield result
                 }
 
+            // let responses =
+            //     getCombinationOfWaypoints waypoints demands
+            //     |> Seq.map (fun r -> getUrl (r))
+            //     |> Seq.map (fun r -> client.GetStringAsync(r))
+            //     |> Seq.map (fun r -> r.Result)
+
             let responses =
-                getCombinationOfWaypoints waypoints demands
-                |> Seq.map (fun r -> getUrl (r))
-                |> Seq.map (fun r -> client.GetStringAsync(r))
-                |> Seq.map (fun r -> r.Result)
+                getOptimalWaypointsWithTheta waypoints demands
+                |> fun x ->
+                    match x with
+                    | Success x -> Success(getUrl x)
+                    | Failure f -> Failure "Could not find optimal routes"
+                |> bind getFromAsyncHttp
 
             return responses |> JSON
         }
