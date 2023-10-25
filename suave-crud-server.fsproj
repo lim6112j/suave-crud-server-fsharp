@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="EnvVar.fs" />
+    <Compile Include="./env/EnvVar.fs" />
     <Compile Include="./types/types.fs" />
     <Compile Include="./utils/utils.fs" />
-    <Compile Include="PostgresCon.fs" />
-    <Compile Include="OSRMRepository.fs" />
-    <Compile Include="OSRMService.fs" />
-    <Compile Include="VstopRepository.fs" />
-    <Compile Include="VstopService.fs" />
-    <Compile Include="UserRepository.fs" />
-    <Compile Include="UserService.fs" />
+    <Compile Include="./database/PostgresCon.fs" />
+    <Compile Include="./repositories/OSRMRepository.fs" />
+    <Compile Include="./services/OSRMService.fs" />
+    <Compile Include="./repositories/VstopRepository.fs" />
+    <Compile Include="./services/VstopService.fs" />
+    <Compile Include="./repositories/UserRepository.fs" />
+    <Compile Include="./services/UserService.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
