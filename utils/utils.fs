@@ -3,8 +3,7 @@ namespace SuaveAPI.Utils
 open System
 open FSharp.Configuration
 open System.Collections.Generic
-
-type Loc = { Lng: string; Lat: string }
+open SuaveAPI.Types
 
 type YamlSettings = YamlConfig<"config.yaml">
 

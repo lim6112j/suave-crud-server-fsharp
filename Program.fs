@@ -14,6 +14,7 @@ module Program =
     open SuaveAPI.VstopService
     open SuaveAPI.APIHelper
     open SuaveAPI.APIService
+    open SuaveAPI.Utils
     open EnvVariable.EnvVar
     open System
 
