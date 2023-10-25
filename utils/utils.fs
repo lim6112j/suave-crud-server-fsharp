@@ -3,12 +3,14 @@ namespace SuaveAPI
 open System
 open FSharp.Configuration
 open System.Collections.Generic
+open System.Net.Http
 open SuaveAPI.Types
 
 type YamlSettings = YamlConfig<"config.yaml">
 
 [<AutoOpen>]
 module Utils =
+
     let config = YamlSettings()
     let apiHead = config.OSRM.Server.Host.ToString()
     let apiTail = config.OSRM.Server.Tail
@@ -71,3 +73,13 @@ module Utils =
             )
 
         thetaOrigin * 180.0 / Math.PI
+
+    let getFromAsyncHttp (query: string) =
+        use client = new HttpClient()
+        let result = client.GetStringAsync(query).Result
+        result
+
+    let bind func optionInput =
+        match optionInput with
+        | Success x -> func x
+        | Failure f -> f
