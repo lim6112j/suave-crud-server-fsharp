@@ -3,8 +3,8 @@
 open FSharp.Configuration
 
 module Program =
-    open Suave.Web
     open Suave
+    open Suave.Web
     open Suave.Filters
     open Suave.Operators
     open Suave.Successful
@@ -17,6 +17,7 @@ module Program =
     open SuaveAPI.Utils
     open EnvVariable.EnvVar
     open System
+    open System.Threading
 
     // type Settings = AppSettings<"app.config">
     type YamlSettings = YamlConfig<"config.yaml">
@@ -59,5 +60,14 @@ module Program =
                   GET >=> path "/users" >=> userActions
                   GET >=> path "/osrm" >=> osrmActions ]
 
-        startWebServer defaultConfig app
+        let cancellationTokenSource = new CancellationTokenSource()
+
+        let webServerConfig =
+            { defaultConfig with
+                cancellationToken = cancellationTokenSource.Token }
+
+        let _, webServer = startWebServerAsync webServerConfig app
+        Async.Start(webServer, cancellationTokenSource.Token) |> ignore
+        Console.ReadKey true |> ignore
+        cancellationTokenSource.Cancel()
         0
