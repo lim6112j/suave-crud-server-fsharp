@@ -1,0 +1,14 @@
+{
+    "waypoints": [
+          { "Lng" : "126.79939689052419", "Lat" : "37.527319039426736" },
+          { "Lng" : "126.87491792408139","Lat" : "37.627320777159646" },
+          { "Lng" : "127.06568457951413","Lat" : "37.665543301893806" },
+          { "Lng" : "127.16568457951413", "Lat" : "37.565543301893806" } 
+    ],
+    "demands": [ 
+          { "Lng" : "126.80939689052419", "Lat" : "37.547319039426736" },
+          { "Lng" : "126.90491792408139", "Lat" : "37.657320777159646" } 
+    ]
+}
+      
+{"code":"Ok","routes":[{"legs":[{"steps":[],"distance":2863.2,"duration":359.4,"summary":"","weight":3646.5},{"steps":[],"distance":15245.4,"duration":1068.9,"summary":"","weight":1108.4},{"steps":[],"distance":6312.7,"duration":613.6,"summary":"","weight":691.3},{"steps":[],"distance":24954.3,"duration":1475.6,"summary":"","weight":1494.6},{"steps":[],"distance":19160.9,"duration":1309.8,"summary":"","weight":1355.8}],"distance":68536.5,"duration":4827.3,"weight_name":"routability","weight":8296.6}],"waypoints":[{"hint":"4eotgMvrLYAoAAAAXQAAAAAAAAAAAAAAePHhQRYagUIAAAAAAAAAACgAAABdAAAAAAAAAAAAAAA0BAAALM6OB_iePAIlzo4HF588AgAAPxD_5z5-","distance":3.495738,"name":"성오로160번길","location":[126.799404,37.527288]},{"hint":"wFAwgO9QMICAAAAAAAAAAHsAAAAAAAAAaspVQgAAAABEW01CAAAAAIAAAAAAAAAAewAAAAAAAAA0BAAA_PyOB_zoPAI19Y4HN-08AgUA_xP_5z5-","distance":213.127923,"name":"","location":[126.811388,37.546236]},{"hint":"UJ8DgLifA4AZAAAAFAAAAH0AAADBAAAAw2tkQd84K0FCx4pCC1PWQg0AAAAKAAAAPgAAAGEAAAA0BAAAWvGPB4wmPgIm9Y8HuSU-AgMA_wD_5z5-","distance":88.946374,"name":"의장로","location":[126.873946,37.627532]},{"hint":"QL4ggMa-IIBSAAAAAAAAAAAAAAAAAAAAiSwJQgAAAAAAAAAAAAAAAFIAAAAAAAAAAAAAAAAAAAA0BAAAtWqQB0SdPgJWapAH6Zo-AgAA_wr_5z5-","distance":67.448419,"name":"","location":[126.905013,37.657924]},{"hint":"76EvgIaiL4CAAAAAOQAAADsAAAAAAAAAOxnXQcMUO0GYjUNBAAAAAEAAAAAcAAAAHQAAAAAAAAA0BAAASt6SB9C6PgJV3pIHB7s-AgEAbxH_5z5-","distance":6.180989,"name":"","location":[127.065674,37.665488]},{"hint":"j30tgJR9LYCsAAAAGQAAAAAAAAAAAAAAqq3vQh-phkEAAAAAAAAAAKwAAAAZAAAAAAAAAAAAAAA0BAAABGWUB4I0PQL1ZJQHZzQ9AgAAHwf_5z5-","distance":3.276522,"name":"고덕비즈밸리로6길","location":[127.1657,37.56557]}]}

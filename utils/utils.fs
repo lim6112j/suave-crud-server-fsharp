@@ -5,6 +5,11 @@ open FSharp.Configuration
 open System.Collections.Generic
 open System.Net.Http
 open SuaveAPI.Types
+open Newtonsoft.Json
+open Newtonsoft.Json.Serialization
+open Suave
+open Suave.Operators
+open Suave.Successful
 
 type YamlSettings = YamlConfig<"config.yaml">
 
@@ -83,3 +88,17 @@ module Utils =
         match optionInput with
         | Success x -> func x
         | Failure f -> f
+
+    let getUTF8 (str: byte[]) =
+        System.Text.Encoding.UTF8.GetString(str)
+
+    let jsonToObject<'t> json =
+        JsonConvert.DeserializeObject(json, typeof<'t>) :?> 't
+
+    let getActionData<'t> (req: HttpRequest) =
+        req.rawForm
+        |> getUTF8
+        |> jsonToObject<'t>
+        |> fun s ->
+            printfn "%A" s
+            s

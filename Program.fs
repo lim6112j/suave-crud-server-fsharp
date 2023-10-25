@@ -41,7 +41,8 @@ module Program =
         printfn "%s" config.DB.ConnectionString
 
 
-        let osrmActions = osrmHandle "osrm" { OSRMResponse = OSRMRepository.apiCall }
+        let osrmActions = osrmHandle "osrm" { postOSRM = OSRMRepository.apiPostCall }
+
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
         let userActions =
@@ -58,7 +59,7 @@ module Program =
             choose
                 [ GET >=> path "/vstops" >=> vstopActions
                   GET >=> path "/users" >=> userActions
-                  GET >=> path "/osrm" >=> osrmActions ]
+                  POST >=> path "/osrm" >=> osrmActions ]
 
         let cancellationTokenSource = new CancellationTokenSource()
 

@@ -24,7 +24,13 @@ module OSRMRepository =
         JsonConvert.SerializeObject(v, jsonSerializerSettings) |> OK
         >=> Writers.setMimeType "application/json"
 
-    let apiCall waypoints demands =
+
+
+    let apiPostCall (param: OsrmReq) =
+
+        let waypoints = param.waypoints
+        let demands = param.demands
+
         async {
             use client = new HttpClient()
 
@@ -82,6 +88,9 @@ module OSRMRepository =
                     | Success x -> Success(getUrl x)
                     | Failure f -> Failure $"Could not find optimal routes with {f}"
                 |> bind getFromAsyncHttp
+                |> fun s ->
+                    printfn "%A" s
+                    s
 
             return responses |> JSON
         }
