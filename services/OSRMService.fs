@@ -16,4 +16,4 @@ module OSRMService =
 
         choose
             [ path actionPath
-              >=> choose [ POST >=> request (getActionData >> action.postOSRM >> JSON) ] ]
+              >=> choose [ POST >=> request (getActionData >> action.postOSRM) ] ]
