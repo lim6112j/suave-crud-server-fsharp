@@ -15,7 +15,7 @@ open SuaveAPI.Types
 type Idx = { I: int; J: int }
 
 [<AutoOpen>]
-module APIRepository =
+module OSRMRepository =
 
     let JSON v =
         let jsonSerializerSettings = new JsonSerializerSettings()

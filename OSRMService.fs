@@ -5,7 +5,7 @@ open Suave.Operators
 open SuaveAPI.Types
 
 [<AutoOpen>]
-module APIService =
+module OSRMService =
     open Suave.Filters
 
     type Actions<'t> =
