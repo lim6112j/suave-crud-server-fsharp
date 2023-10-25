@@ -40,9 +40,6 @@ module OSRMRepository =
                     let thetaOrigin = getTheta pair dmds[0]
                     let thetaDestination = getTheta pair dmds[1]
                     (thetaOrigin, thetaDestination, i))
-                |> Seq.map (fun pair ->
-                    printfn "%A" pair
-                    pair)
                 |> Seq.fold
                     (fun acc pair ->
                         match pair with
@@ -83,7 +80,7 @@ module OSRMRepository =
                 |> fun x ->
                     match x with
                     | Success x -> Success(getUrl x)
-                    | Failure f -> Failure "Could not find optimal routes"
+                    | Failure f -> Failure $"Could not find optimal routes with {f}"
                 |> bind getFromAsyncHttp
 
             return responses |> JSON
