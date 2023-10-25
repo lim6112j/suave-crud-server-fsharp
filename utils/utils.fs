@@ -1,4 +1,4 @@
-namespace SuaveAPI.Utils
+namespace SuaveAPI
 
 open System
 open FSharp.Configuration

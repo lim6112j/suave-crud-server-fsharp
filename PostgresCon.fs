@@ -1,4 +1,4 @@
-module SuaveAPI.PG
+namespace SuaveAPI
 
 open Npgsql.FSharp
 

@@ -1,5 +1,5 @@
-namespace SuaveAPI.Types
+namespace SuaveAPI
 
 [<AutoOpen>]
-module types =
+module Types =
     type Loc = { Lng: string; Lat: string }

@@ -1,4 +1,4 @@
-namespace SuaveAPI.APIService
+namespace SuaveAPI
 
 open Suave
 open Suave.Operators

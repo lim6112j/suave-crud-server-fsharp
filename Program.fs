@@ -12,7 +12,7 @@ module Program =
     open SuaveAPI.UserRepository
     open SuaveAPI.VstopRepository
     open SuaveAPI.VstopService
-    open SuaveAPI.APIHelper
+    open SuaveAPI.APIRepository
     open SuaveAPI.APIService
     open SuaveAPI.Utils
     open EnvVariable.EnvVar
@@ -40,7 +40,7 @@ module Program =
         printfn "%s" config.DB.ConnectionString
 
 
-        let osrmActions = osrmHandle "osrm" { OSRMResponse = APIHelper.apiCall }
+        let osrmActions = osrmHandle "osrm" { OSRMResponse = APIRepository.apiCall }
         let vstopActions = vstopHandle "vstops" { ListVstops = VstopRepository.getVstops }
 
         let userActions =

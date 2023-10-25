@@ -15,7 +15,7 @@ open SuaveAPI.Types
 type Idx = { I: int; J: int }
 
 [<AutoOpen>]
-module APIHelper =
+module APIRepository =
 
     let JSON v =
         let jsonSerializerSettings = new JsonSerializerSettings()

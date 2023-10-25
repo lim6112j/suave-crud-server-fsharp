@@ -1,6 +1,6 @@
 namespace SuaveAPI.VstopRepository
 
-open SuaveAPI.PG
+open SuaveAPI.PostgresCon
 
 module VstopRepository =
     let getVstops () =

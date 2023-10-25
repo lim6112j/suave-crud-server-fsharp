@@ -11,7 +11,7 @@
     <Compile Include="./types/types.fs" />
     <Compile Include="./utils/utils.fs" />
     <Compile Include="PostgresCon.fs" />
-    <Compile Include="APIHelper.fs" />
+    <Compile Include="APIRepository.fs" />
     <Compile Include="APIService.fs" />
     <Compile Include="VstopRepository.fs" />
     <Compile Include="VstopService.fs" />
