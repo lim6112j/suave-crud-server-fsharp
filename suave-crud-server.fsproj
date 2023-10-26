@@ -11,6 +11,7 @@
     <Compile Include="./types/types.fs" />
     <Compile Include="./utils/utils.fs" />
     <Compile Include="./database/PostgresCon.fs" />
+    <Compile Include="./algorithm/Algorithm.fs" />
     <Compile Include="./repositories/OSRMRepository.fs" />
     <Compile Include="./services/OSRMService.fs" />
     <Compile Include="./repositories/VstopRepository.fs" />
