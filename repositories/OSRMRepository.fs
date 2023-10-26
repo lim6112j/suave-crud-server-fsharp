@@ -60,20 +60,8 @@ module OSRMRepository =
                     let thetaOrigin = getTheta pair dmds[0]
                     let thetaDestination = getTheta pair dmds[1]
                     (thetaOrigin, thetaDestination, i))
-                |> Seq.fold
-                    (fun acc pair ->
-                        match pair with
-                        | (x, y, i) when x > 90 -> outsertAt i dmds[0] acc
-                        // inserted item makes insertion point increased
-                        | (x, y, i) when y > 90 -> outsertAt (i + acc.Length - wps.Length) dmds[1] acc
-                        | _ -> acc)
-                    wps
-                |> fun waypoint ->
-                    let len = wps.Length + dmds.Length
-
-                    match waypoint with
-                    | x when x.Length = len -> Success waypoint
-                    | x -> Failure x
+                |> insertDemandsBeweenWaypointsPair 90 wps dmds
+                |> validateWaypointsWithDemands wps dmds
 
             printfn "%A" (getOptimalWaypointsWithTheta waypoints demands)
 
