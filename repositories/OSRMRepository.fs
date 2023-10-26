@@ -61,7 +61,6 @@ module OSRMRepository =
                     let thetaDestination = getTheta pair dmds[1]
                     (thetaOrigin, thetaDestination, i))
                 |> insertDemandsBeweenWaypointsPair 90 wps dmds
-                |> validateWaypointsWithDemands wps dmds
 
             printfn "%A" (getOptimalWaypointsWithTheta waypoints demands)
 

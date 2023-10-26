@@ -13,12 +13,6 @@ module Algorithm =
                 | _ -> acc)
 
             wps
-
-    let validateWaypointsWithDemands (wps: Loc list) (dmds: Loc list) input =
-        input
-        |> fun (waypoint: Loc list) ->
-            let len = wps.Length + dmds.Length
-
-            match waypoint with
-            | x when x.Length = len -> Success waypoint
+        |> function
+            | x when x.Length = wps.Length + dmds.Length -> Success x
             | x -> Failure x
