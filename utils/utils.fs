@@ -20,6 +20,13 @@ module Utils =
     let apiHead = config.OSRM.Server.Host.ToString()
     let apiTail = config.OSRM.Server.Tail
 
+    let JSON v =
+        let jsonSerializerSettings = new JsonSerializerSettings()
+        jsonSerializerSettings.ContractResolver <- new CamelCasePropertyNamesContractResolver()
+
+        JsonConvert.SerializeObject(v, jsonSerializerSettings) |> OK
+        >=> Writers.setMimeType "application/json"
+
     let getUrl (wps: list<Loc>) =
         wps
         |> Seq.fold
@@ -47,8 +54,9 @@ module Utils =
     /// </summary>
     let rec traversePair (wps: list<Loc>) =
         match wps with
+        | [] -> []
+        | x :: [] -> []
         | x :: y :: tail -> (x, y) :: traversePair (y :: tail)
-        | _ -> []
 
     // printfn "%A" (traversePair waypoints)
     /// <summary>

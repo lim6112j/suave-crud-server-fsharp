@@ -17,14 +17,6 @@ type Idx = { I: int; J: int }
 [<AutoOpen>]
 module OSRMRepository =
 
-    let JSON v =
-        let jsonSerializerSettings = new JsonSerializerSettings()
-        jsonSerializerSettings.ContractResolver <- new CamelCasePropertyNamesContractResolver()
-
-        JsonConvert.SerializeObject(v, jsonSerializerSettings) |> OK
-        >=> Writers.setMimeType "application/json"
-
-
     /// <summary>
     /// request body
     ///     {
@@ -44,37 +36,10 @@ module OSRMRepository =
 
         let waypoints = param.waypoints
         let demands = param.demands
+        let theta = 90 // TODO get from request
 
         async {
             use client = new HttpClient()
-
-
-            /// <summary>
-            /// mobble beta-skeleton
-            /// 2 vectors inner theta calculation (waypoints pair with demand point)
-            ///
-            /// </summary>
-            let getOptimalWaypointsWithTheta (wps: list<Loc>) (dmds: list<Loc>) =
-                traversePair wps
-                |> Seq.mapi (fun i pair ->
-                    let thetaOrigin = getTheta pair dmds[0]
-                    let thetaDestination = getTheta pair dmds[1]
-                    (thetaOrigin, thetaDestination, i))
-                |> insertDemandsBeweenWaypointsPair 90 wps dmds
-
-            printfn "%A" (getOptimalWaypointsWithTheta waypoints demands)
-
-            /// <summary>
-            /// get combinational waypoints list for cost calculation ( Mobble algorithm )
-            /// number of waypoints = n+1 C r  (n : waypoints number, r : demands number)
-            /// </summary>
-            let getCombinationOfWaypoints (wp: list<Loc>) (dmds: list<Loc>) =
-                seq {
-                    for i in 0 .. wp.Length - 1 do
-                        for j in i + 1 .. wp.Length do
-                            let result = outsertAt i dmds[0] wp |> outsertAt j dmds[1]
-                            yield result
-                }
 
             // let responses =
             //     getCombinationOfWaypoints waypoints demands
@@ -83,7 +48,7 @@ module OSRMRepository =
             //     |> Seq.map (fun r -> r.Result)
 
             let responses =
-                getOptimalWaypointsWithTheta waypoints demands
+                getOptimalWaypointsWithTheta theta waypoints demands
                 |> bind getUrl
                 |> bind getFromAsyncHttp
                 |> unwrap
