@@ -46,18 +46,32 @@ module Algorithm =
                     yield result
         }
 
+    type LocWithLabel =
+        { Lat: string
+          Lng: string
+          Kind: string }
+
     /// <summary>
     /// vectorize demand and supply , compare vectors for determine dispatch
     /// TODO not working properly
     /// </summary>
     let getVectorizedWaypoints (wps: Loc list) (dmds: Loc list) =
-        wps
-        |> Seq.map (fun el ->
-            match el with
-            | el when float (el.Lat) < float (dmds[0].Lat) -> [ el ]
-            | el when float (el.Lat) >= float (dmds[0].Lat) -> [ dmds[0]; el ]
-            | el when float (el.Lat) < float (dmds[1].Lat) -> [ el ]
-            | el when float (el.Lat) >= float (dmds[1].Lat) -> [ dmds[1]; el ]
-            | _ -> [])
-        |> Seq.concat
+        let labeledWps =
+            wps
+            |> Seq.map (fun w ->
+                { Lat = w.Lat
+                  Lng = w.Lng
+                  Kind = "waypoints" })
+            |> Seq.toList
+
+        let labeledDmds =
+            dmds
+            |> Seq.map (fun d ->
+                { Lat = d.Lat
+                  Lng = d.Lng
+                  Kind = "demands" })
+            |> Seq.toList
+
+        labeledWps @ labeledDmds
+        |> Seq.sortBy (fun x -> x.Lat)
         |> printfn "getting vectorized waypoints %A\n"

@@ -47,6 +47,8 @@ module OSRMRepository =
             //     |> Seq.map (fun r -> client.GetStringAsync(r))
             //     |> Seq.map (fun r -> r.Result)
 
+            // let testres = getVectorizedWaypoints waypoints demands
+
             let responses =
                 getOptimalWaypointsWithTheta theta waypoints demands
                 |> bind getUrl
