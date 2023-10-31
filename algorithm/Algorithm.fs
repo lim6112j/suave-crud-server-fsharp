@@ -45,3 +45,19 @@ module Algorithm =
                     let result = outsertAt i dmds[0] wp |> outsertAt j dmds[1]
                     yield result
         }
+
+    /// <summary>
+    /// vectorize demand and supply , compare vectors for determine dispatch
+    /// TODO not working properly
+    /// </summary>
+    let getVectorizedWaypoints (wps: Loc list) (dmds: Loc list) =
+        wps
+        |> Seq.map (fun el ->
+            match el with
+            | el when float (el.Lat) < float (dmds[0].Lat) -> [ el ]
+            | el when float (el.Lat) >= float (dmds[0].Lat) -> [ dmds[0]; el ]
+            | el when float (el.Lat) < float (dmds[1].Lat) -> [ el ]
+            | el when float (el.Lat) >= float (dmds[1].Lat) -> [ dmds[1]; el ]
+            | _ -> [])
+        |> Seq.concat
+        |> printfn "getting vectorized waypoints %A\n"
