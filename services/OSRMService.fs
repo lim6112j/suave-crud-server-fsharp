@@ -7,13 +7,22 @@ open SuaveAPI.Types
 [<AutoOpen>]
 module OSRMService =
     open Suave.Filters
+    open Suave.RequestErrors
 
-    type Actions<'t> = { postOSRM: 't -> WebPart }
+    type Actions<'t> =
+        { postOSRM: 't -> Result<string, Loc list> }
 
     let osrmHandle nameOfAction action =
+        let badRequest = BAD_REQUEST "Oops, something went wrong here!"
+
+        let handleAction reqError =
+            function
+            | Success r -> r |> JSON
+            | Failure _ -> reqError
+
         let postOSRM param = action.postOSRM
         let actionPath = "/" + nameOfAction
 
         choose
             [ path actionPath
-              >=> choose [ POST >=> request (getActionData >> action.postOSRM) ] ]
+              >=> choose [ POST >=> request (getActionData >> action.postOSRM >> handleAction badRequest) ] ]

@@ -53,11 +53,10 @@ module OSRMRepository =
                 getOptimalWaypointsWithTheta theta waypoints demands
                 |> bind getUrl
                 |> bind getFromAsyncHttp
-                |> unwrap
                 |> fun s ->
                     printfn "%A" s
                     s
 
-            return responses |> JSON
+            return responses
         }
         |> Async.RunSynchronously
