@@ -24,15 +24,6 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
-        // webpart
-        let sleep milliseconds message : WebPart =
-            fun (context: HttpContext) ->
-                async {
-                    do! Async.Sleep(milliseconds: int)
-                    return! OK message context
-                }
-
-        printfn "%A" (sleep 10000 "hello world")
 
         // environment variable
         // printfn "%s" (Environment.GetEnvironmentVariable "PATH")
