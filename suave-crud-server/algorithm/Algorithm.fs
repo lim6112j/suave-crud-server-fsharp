@@ -29,10 +29,6 @@ module Algorithm =
             let thetaOrigin = getTheta pair dmds[0]
             let thetaDestination = getTheta pair dmds[1]
             (thetaOrigin, thetaDestination, i))
-        |> Seq.map (fun pair ->
-            printfn "%A" pair
-            pair)
-        |> insertDemandsBeweenWaypointsPair theta wps dmds
 
     /// <summary>
     /// get combinational waypoints list for cost calculation ( Mobble algorithm )

@@ -51,6 +51,7 @@ module OSRMRepository =
 
             let responses =
                 getOptimalWaypointsWithTheta theta waypoints demands
+                |> insertDemandsBeweenWaypointsPair theta waypoints demands
                 |> bind getUrl
                 |> bind getFromAsyncHttp
                 |> fun s ->
