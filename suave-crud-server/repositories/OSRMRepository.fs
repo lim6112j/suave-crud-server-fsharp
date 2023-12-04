@@ -39,7 +39,7 @@ module OSRMRepository =
         let theta = 90 // TODO get from request
 
         async {
-            use client = new HttpClient()
+            // use client = new HttpClient()
 
             // let responses =
             //     getCombinationOfWaypoints waypoints demands
@@ -54,9 +54,6 @@ module OSRMRepository =
                 |> insertDemandsBeweenWaypointsPair theta waypoints demands
                 |> bind getUrl
                 |> bind getFromAsyncHttp
-                |> fun s ->
-                    printfn "%A" s
-                    s
 
             return responses
         }

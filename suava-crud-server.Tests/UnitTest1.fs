@@ -3,6 +3,19 @@ module suava_crud_server.Tests
 open NUnit.Framework
 open Microsoft.FSharp.Reflection
 open SuaveAPI
+open System
+open System.Text.Json
+
+type MyResponse = { code: String; routes: Route list }
+
+and Route =
+    { leg: Leg list
+      distance: float32
+      duration: float32
+      weight_name: String
+      weight: float32 }
+
+and Leg = { duration: float32 }
 
 [<SetUp>]
 let theta = 90.0
@@ -55,11 +68,33 @@ let ``length of waypointsxdemands  4x2 => combination number of waypoints insert
 
     Assert.AreEqual(result, 10)
 
-// [<Test>]
-// let `` cost calculation of waypoints X demands ``() =
-//     let result = SuaveAPI.Algorithm.getCombinationOfWaypoints waypoints demands
-//               |> Seq.map(fun w -> )
-//     Assert.AreEqual(lenResult, 10)
+[<Test>]
+let ``osrm apicall test`` () =
+    let result =
+        let data =
+            { demands = demands
+              waypoints = waypoints }
+
+        let bind = SuaveAPI.Utils.bind
+
+        data
+        |> SuaveAPI.OSRMRepository.apiPostCall
+        |> bind JsonSerializer.Deserialize<MyResponse>
+        |> bind (fun res ->
+            printfn "%A mins, %A km" (res.routes[0].duration / 60.0f) (res.routes[0].distance / 1000.0f))
+
+    Assert.True(true)
+
+[<Test>]
+let `` cost calculation of waypoints X demands `` () =
+    let result =
+        SuaveAPI.Algorithm.getCombinationOfWaypoints waypoints demands
+        |> Seq.map (fun w ->
+            printfn "%A" w
+            w)
+
+    printfn "%A" result
+    Assert.True(true)
 
 [<Test>]
 let ``calculate theta between waypoints part and demands point, result size = waypoints.length - 1 `` () =

@@ -2,6 +2,10 @@ namespace SuaveAPI
 
 [<AutoOpen>]
 module Types =
+    type Algorithm =
+        | BetaSkeleton
+        | Combination
+
     type Loc = { Lng: string; Lat: string }
 
     type Result<'TSuccess, 'TFailure> =
