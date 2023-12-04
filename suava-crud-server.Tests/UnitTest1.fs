@@ -5,6 +5,8 @@ open Microsoft.FSharp.Reflection
 open SuaveAPI
 
 [<SetUp>]
+let theta = 90.0
+
 let waypoints =
     [| { Lng = "126.79939689052419"
          Lat = "37.527319039426736" }
@@ -48,22 +50,29 @@ let ``algorithm record locwithkind test`` () =
 let ``length of waypointsxdemands  4x2 => combination number of waypoints insertion with demands : 5C2 = 10 expected``
     ()
     =
-    let result = SuaveAPI.Algorithm.getCombinationOfWaypoints waypoints demands
-    let lenResult = (result |> Seq.length)
-    Assert.AreEqual(lenResult, 10)
+    let result =
+        SuaveAPI.Algorithm.getCombinationOfWaypoints waypoints demands |> Seq.length
+
+    Assert.AreEqual(result, 10)
+
+// [<Test>]
+// let `` cost calculation of waypoints X demands ``() =
+//     let result = SuaveAPI.Algorithm.getCombinationOfWaypoints waypoints demands
+//               |> Seq.map(fun w -> )
+//     Assert.AreEqual(lenResult, 10)
 
 [<Test>]
 let ``calculate theta between waypoints part and demands point, result size = waypoints.length - 1 `` () =
-    let result = SuaveAPI.Algorithm.getOptimalWaypointsWithTheta 90.0 waypoints demands
+    let result = SuaveAPI.Algorithm.getOptimalWaypointsWithTheta theta waypoints demands
     Assert.AreEqual((result |> Seq.length), (waypoints |> Seq.length) - 1)
 
 [<Test>]
 let ``input should contains 2 values bigger than theta`` () =
     let goodResult =
-        SuaveAPI.Algorithm.insertDemandsBeweenWaypointsPair 90.0 waypoints demands goodInput
+        SuaveAPI.Algorithm.insertDemandsBeweenWaypointsPair theta waypoints demands goodInput
 
     let badResult =
-        SuaveAPI.Algorithm.insertDemandsBeweenWaypointsPair 90.0 waypoints demands badInput
+        SuaveAPI.Algorithm.insertDemandsBeweenWaypointsPair theta waypoints demands badInput
 
     // printfn "%A" goodResult
     // printfn "%A" badResult
