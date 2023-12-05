@@ -64,25 +64,21 @@ module OSRMRepository =
         async {
             use client = new HttpClient()
             //
-            // let funcForAlgorithm algorithm theta' waypoints' demands' =
-            //     match algorithm with
-            //     | (Algorithm.BetaSkeleton) ->
-            //         fun () ->
-            //             getOptimalWaypointsWithTheta theta' waypoints' demands'
-            //             |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
-            //     | (Algorithm.Combination) ->
-            //         fun () ->
-            //             getCombinationOfWaypoints waypoints' demands'
-            //             |> Seq.map (fun r -> getUrl (r))
-            //             |> Seq.map (fun r -> client.GetStringAsync(r))
-            //             |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
-            //             |> Seq.minBy (fun r -> r.duration)
-            //     // |> fun res ->
-            //     //     match res with
-            //     //     | s when Seq.isEmpty s ->
-            //     //         Failure "combination waypoints demands failed"
-            //     //     | res -> Success(Seq.toList res)
-            //     | _ -> fun () -> ()
+            let funcForAlgorithm algorithm theta' waypoints' demands' =
+                match algorithm with
+                | (Algorithm.BetaSkeleton) ->
+                    getOptimalWaypointsWithTheta theta' waypoints' demands'
+                    |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
+                    |> bind getUrl
+                    |> bind getFromAsyncHttp
+                | _ ->
+                    getCombinationOfWaypoints waypoints' demands'
+                    |> Seq.map (fun r -> getUrl (r))
+                    |> Seq.map (fun r -> getFromAsyncHttp (r))
+                    |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+                    |> Seq.minBy (fun r -> r.routes[0].duration)
+                    |> JsonSerializer.Serialize
+                    |> Success
 
             // let responses =
             //     getCombinationOfWaypoints waypoints demands
@@ -97,16 +93,8 @@ module OSRMRepository =
             //     |> insertDemandsBeweenWaypointsPair theta waypoints demands
             //     |> bind getUrl
             //     |> bind getFromAsyncHttp
-
-            let responses =
-                getCombinationOfWaypoints waypoints demands
-                |> Seq.map (fun r -> getUrl (r))
-                |> Seq.map (fun r -> getFromAsyncHttp (r))
-                |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
-                |> Seq.minBy (fun r -> r.routes[0].duration)
-                |> JsonSerializer.Serialize
-                |> Success
-
+            let algorithmVar: Algorithm = enum algorithmParam
+            let responses = funcForAlgorithm algorithmVar theta waypoints demands
             return responses
         }
         |> Async.RunSynchronously
