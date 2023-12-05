@@ -6,7 +6,10 @@ open SuaveAPI
 open System
 open System.Text.Json
 
-type MyResponse = { code: String; routes: Route list }
+type Response =
+    { code: String
+      routes: Route list
+      waypoints: Waypoint list }
 
 and Route =
     { leg: Leg list
@@ -16,6 +19,12 @@ and Route =
       weight: float32 }
 
 and Leg = { duration: float32 }
+
+and Waypoint =
+    { hint: string
+      distance: float32
+      name: string
+      location: float32[] }
 
 [<SetUp>]
 let theta = 90.0
@@ -69,17 +78,47 @@ let ``length of waypointsxdemands  4x2 => combination number of waypoints insert
     Assert.AreEqual(result, 10)
 
 [<Test>]
+let ``combination test : shortest path in time`` () =
+    let result =
+        getCombinationOfWaypoints waypoints demands
+        |> Seq.map (fun r -> getUrl (r))
+        |> Seq.map (fun r -> getFromAsyncHttp (r))
+        |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+        |> Seq.minBy (fun r -> r.routes[0].duration)
+        // |> fun r -> r.waypoints |> Seq.map (fun w -> w.location)
+        // |> fun r -> JsonSerializer.Serialize r
+        |> printfn "%A"
+
+
+    Assert.True(true)
+
+[<Test>]
+let ``combination test : shortest path in distance`` () =
+    let result =
+        getCombinationOfWaypoints waypoints demands
+        |> Seq.map (fun r -> getUrl (r))
+        |> Seq.map (fun r -> getFromAsyncHttp (r))
+        |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+        |> Seq.minBy (fun r -> r.routes[0].distance)
+        |> fun r -> seq { r }
+        |> Seq.toList
+        |> Success
+
+    Assert.True(true)
+
+[<Test>]
 let ``osrm apicall test`` () =
     let result =
         let data =
             { demands = demands
-              waypoints = waypoints }
+              waypoints = waypoints
+              algorithm = 0 }
 
         let bind = SuaveAPI.Utils.bind
 
         data
         |> SuaveAPI.OSRMRepository.apiPostCall
-        |> bind JsonSerializer.Deserialize<MyResponse>
+        |> bind JsonSerializer.Deserialize<Response>
         |> bind (fun res ->
             printfn "%A mins, %A km" (res.routes[0].duration / 60.0f) (res.routes[0].distance / 1000.0f))
 
@@ -90,10 +129,10 @@ let `` cost calculation of waypoints X demands `` () =
     let result =
         SuaveAPI.Algorithm.getCombinationOfWaypoints waypoints demands
         |> Seq.map (fun w ->
-            printfn "%A" w
+            // printfn "%A" w
             w)
 
-    printfn "%A" result
+    // printfn "%A" result
     Assert.True(true)
 
 [<Test>]

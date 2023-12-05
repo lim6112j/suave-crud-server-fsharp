@@ -10,9 +10,30 @@ open Suave.Successful
 open Suave.Operators
 open SuaveAPI.Utils
 open SuaveAPI.Types
+open System.Text.Json
 
 
 type Idx = { I: int; J: int }
+
+type Response =
+    { code: string
+      routes: Route list
+      waypoints: Waypoint list }
+
+and Route =
+    { leg: Leg list
+      distance: float32
+      duration: float32
+      weight_name: string
+      weight: float32 }
+
+and Leg = { duration: float32 }
+
+and Waypoint =
+    { hint: string
+      distance: float32
+      name: string
+      location: float32[] }
 
 [<AutoOpen>]
 module OSRMRepository =
@@ -36,10 +57,32 @@ module OSRMRepository =
 
         let waypoints = param.waypoints
         let demands = param.demands
+        let algorithmParam = param.algorithm
         let theta = 90 // TODO get from request
 
+
         async {
-            // use client = new HttpClient()
+            use client = new HttpClient()
+            //
+            // let funcForAlgorithm algorithm theta' waypoints' demands' =
+            //     match algorithm with
+            //     | (Algorithm.BetaSkeleton) ->
+            //         fun () ->
+            //             getOptimalWaypointsWithTheta theta' waypoints' demands'
+            //             |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
+            //     | (Algorithm.Combination) ->
+            //         fun () ->
+            //             getCombinationOfWaypoints waypoints' demands'
+            //             |> Seq.map (fun r -> getUrl (r))
+            //             |> Seq.map (fun r -> client.GetStringAsync(r))
+            //             |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+            //             |> Seq.minBy (fun r -> r.duration)
+            //     // |> fun res ->
+            //     //     match res with
+            //     //     | s when Seq.isEmpty s ->
+            //     //         Failure "combination waypoints demands failed"
+            //     //     | res -> Success(Seq.toList res)
+            //     | _ -> fun () -> ()
 
             // let responses =
             //     getCombinationOfWaypoints waypoints demands
@@ -49,11 +92,20 @@ module OSRMRepository =
 
             // let testres = getVectorizedWaypoints waypoints demands
 
+            // let responses =
+            //     getOptimalWaypointsWithTheta theta waypoints demands
+            //     |> insertDemandsBeweenWaypointsPair theta waypoints demands
+            //     |> bind getUrl
+            //     |> bind getFromAsyncHttp
+
             let responses =
-                getOptimalWaypointsWithTheta theta waypoints demands
-                |> insertDemandsBeweenWaypointsPair theta waypoints demands
-                |> bind getUrl
-                |> bind getFromAsyncHttp
+                getCombinationOfWaypoints waypoints demands
+                |> Seq.map (fun r -> getUrl (r))
+                |> Seq.map (fun r -> getFromAsyncHttp (r))
+                |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+                |> Seq.minBy (fun r -> r.routes[0].duration)
+                |> JsonSerializer.Serialize
+                |> Success
 
             return responses
         }

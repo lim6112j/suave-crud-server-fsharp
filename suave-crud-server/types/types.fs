@@ -3,8 +3,8 @@ namespace SuaveAPI
 [<AutoOpen>]
 module Types =
     type Algorithm =
-        | BetaSkeleton
-        | Combination
+        | BetaSkeleton = 0
+        | Combination = 1
 
     type Loc = { Lng: string; Lat: string }
 
@@ -38,7 +38,11 @@ module Types =
           routes: Route[]
           waypoints: Waypoint[] }
 
+    // type OsrmReq =
+    //     { waypoints: list<Loc>
+    //       demands: list<Loc> }
 
     type OsrmReq =
         { waypoints: list<Loc>
-          demands: list<Loc> }
+          demands: list<Loc>
+          algorithm: int }
