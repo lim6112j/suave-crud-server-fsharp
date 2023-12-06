@@ -1,5 +1,27 @@
 namespace SuaveAPI
 
+open System.Text.Json
+
+type Response =
+    { code: string
+      routes: Route list
+      waypoints: Waypoint list }
+
+and Route =
+    { leg: Leg list
+      distance: float32
+      duration: float32
+      weight_name: string
+      weight: float32 }
+
+and Leg = { duration: float32 }
+
+and Waypoint =
+    { hint: string
+      distance: float32
+      name: string
+      location: float32[] }
+
 [<AutoOpen>]
 module Algorithm =
     let insertDemandsBeweenWaypointsPair theta (wps: list<Loc>) (dmds: list<Loc>) input =
@@ -71,3 +93,24 @@ module Algorithm =
         labeledWps @ labeledDmds
         |> Seq.sortBy (fun x -> x.Lat)
         |> printfn "getting vectorized waypoints %A\n"
+
+    /// <summary>
+    /// select algorithm and run selected algorithm
+    /// 0: BetaSkeleton, 1: Combination , default: Combination
+    /// add more algorithm with modifying types for Algorithm in types/types.fs and here
+    /// </summary>
+    let funcForAlgorithm algorithm theta' waypoints' demands' =
+        match algorithm with
+        | (Algorithm.BetaSkeleton) ->
+            getOptimalWaypointsWithTheta theta' waypoints' demands'
+            |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
+            |> bind getUrl
+            |> bind getFromAsyncHttp
+        | _ ->
+            getCombinationOfWaypoints waypoints' demands'
+            |> Seq.map (fun r -> getUrl (r))
+            |> Seq.map (fun r -> getFromAsyncHttp (r))
+            |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+            |> Seq.minBy (fun r -> r.routes[0].duration)
+            |> JsonSerializer.Serialize
+            |> Success

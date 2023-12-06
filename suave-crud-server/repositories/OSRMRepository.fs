@@ -15,25 +15,6 @@ open System.Text.Json
 
 type Idx = { I: int; J: int }
 
-type Response =
-    { code: string
-      routes: Route list
-      waypoints: Waypoint list }
-
-and Route =
-    { leg: Leg list
-      distance: float32
-      duration: float32
-      weight_name: string
-      weight: float32 }
-
-and Leg = { duration: float32 }
-
-and Waypoint =
-    { hint: string
-      distance: float32
-      name: string
-      location: float32[] }
 
 [<AutoOpen>]
 module OSRMRepository =
@@ -50,7 +31,8 @@ module OSRMRepository =
     ///     "demands": [
     ///           { "Lng" : "126.80939689052419", "Lat" : "37.547319039426736" },
     ///           { "Lng" : "126.90491792408139", "Lat" : "37.657320777159646" }
-    ///     ]
+    ///     ],
+    ///     "algorithm": 1
     /// }
     /// </summary>
     let apiPostCall (param: OsrmReq) =
@@ -62,37 +44,6 @@ module OSRMRepository =
 
 
         async {
-            use client = new HttpClient()
-            //
-            let funcForAlgorithm algorithm theta' waypoints' demands' =
-                match algorithm with
-                | (Algorithm.BetaSkeleton) ->
-                    getOptimalWaypointsWithTheta theta' waypoints' demands'
-                    |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
-                    |> bind getUrl
-                    |> bind getFromAsyncHttp
-                | _ ->
-                    getCombinationOfWaypoints waypoints' demands'
-                    |> Seq.map (fun r -> getUrl (r))
-                    |> Seq.map (fun r -> getFromAsyncHttp (r))
-                    |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
-                    |> Seq.minBy (fun r -> r.routes[0].duration)
-                    |> JsonSerializer.Serialize
-                    |> Success
-
-            // let responses =
-            //     getCombinationOfWaypoints waypoints demands
-            //     |> Seq.map (fun r -> getUrl (r))
-            //     |> Seq.map (fun r -> client.GetStringAsync(r))
-            //     |> Seq.map (fun r -> r.Result)
-
-            // let testres = getVectorizedWaypoints waypoints demands
-
-            // let responses =
-            //     getOptimalWaypointsWithTheta theta waypoints demands
-            //     |> insertDemandsBeweenWaypointsPair theta waypoints demands
-            //     |> bind getUrl
-            //     |> bind getFromAsyncHttp
             let algorithmVar: Algorithm = enum algorithmParam
             let responses = funcForAlgorithm algorithmVar theta waypoints demands
             return responses
