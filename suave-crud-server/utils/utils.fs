@@ -94,7 +94,12 @@ module Utils =
 
     let bind func optionInput =
         match optionInput with
-        | Success x -> Success(func x)
+        | Success x ->
+            try
+                Success(func x)
+            with _ ->
+                Failure "binded func raised exception"
+
         | Failure f -> Failure f
 
     let unwrap optionInput =

@@ -38,7 +38,7 @@ module Algorithm =
             wps
         |> function
             | x when x.Length = wps.Length + dmds.Length -> Success x
-            | x -> Failure x
+            | x -> Failure "demands insertion failed between waypoints"
 
     /// <summary>
     /// mobble beta-skeleton
@@ -99,18 +99,24 @@ module Algorithm =
     /// 0: BetaSkeleton, 1: Combination , default: Combination
     /// add more algorithm with modifying types for Algorithm in types/types.fs and here
     /// </summary>
-    let executeSelcetedAlgorithm algorithm theta' waypoints' demands' =
+    let executeSelcetedAlgorithm algorithm theta' waypoints' demands' : Result<string, string> =
         match algorithm with
         | (Algorithm.BetaSkeleton) ->
-            getOptimalWaypointsWithTheta theta' waypoints' demands'
-            |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
-            |> bind getUrl
-            |> bind getFromAsyncHttp
+            try
+                getOptimalWaypointsWithTheta theta' waypoints' demands'
+                |> insertDemandsBeweenWaypointsPair theta' waypoints' demands'
+                |> bind getUrl
+                |> bind getFromAsyncHttp
+            with _ ->
+                Failure "Beta skeleton waypoints optimzation failed"
         | _ ->
-            getCombinationOfWaypoints waypoints' demands'
-            |> Seq.map (fun r -> getUrl (r))
-            |> Seq.map (fun r -> getFromAsyncHttp (r))
-            |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
-            |> Seq.minBy (fun r -> r.routes[0].duration)
-            |> JsonSerializer.Serialize
-            |> Success
+            try
+                getCombinationOfWaypoints waypoints' demands'
+                |> Seq.map (fun r -> getUrl r)
+                |> Seq.map (fun r -> getFromAsyncHttp r)
+                |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+                |> Seq.minBy (fun r -> r.routes[0].duration)
+                |> JsonSerializer.Serialize
+                |> Success
+            with _ ->
+                Failure "combination waypoints calculation failed"

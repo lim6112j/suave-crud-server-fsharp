@@ -85,9 +85,9 @@ let ``combination test : shortest path in time`` () =
         |> Seq.map (fun r -> getFromAsyncHttp (r))
         |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
         |> Seq.minBy (fun r -> r.routes[0].duration)
-        // |> fun r -> r.waypoints |> Seq.map (fun w -> w.location)
-        // |> fun r -> JsonSerializer.Serialize r
-        |> printfn "%A"
+    // |> fun r -> r.waypoints |> Seq.map (fun w -> w.location)
+    // |> fun r -> JsonSerializer.Serialize r
+    // |> printfn "%A"
 
 
     Assert.True(true)
@@ -157,3 +157,25 @@ let ``input should contains 2 values bigger than theta`` () =
     match badResult with
     | Success res -> Assert.True(false)
     | Failure res -> Assert.True(true)
+
+[<Test>]
+let ``executeAlgorithm combination`` () =
+    let result = executeSelcetedAlgorithm Algorithm.Combination 90.0 waypoints demands
+    // printfn "%A" result
+    Assert.True(true)
+
+[<Test>]
+let ``executeAlgorithm betaskeleton`` () =
+    let result = executeSelcetedAlgorithm Algorithm.BetaSkeleton 90.0 waypoints demands
+    // printfn "%A" result
+    Assert.True(true)
+
+[<Test>]
+let ``executeAlgorithm betaskeleton demand insertion failed`` () =
+    let result = executeSelcetedAlgorithm Algorithm.BetaSkeleton 190.0 waypoints demands
+
+    printfn "%A" result
+
+    match result with
+    | Failure f -> Assert.AreEqual(f, "demands insertion failed between waypoints")
+    | Success f -> Assert.True(false)

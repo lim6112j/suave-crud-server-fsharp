@@ -10,7 +10,7 @@ module OSRMService =
     open Suave.RequestErrors
 
     type Actions<'t> =
-        { postOSRM: 't -> Result<string, Loc list> }
+        { postOSRM: 't -> Result<string, string> }
 
     let osrmHandle nameOfAction action =
         let badRequest = BAD_REQUEST "Oops, something went wrong here!"
