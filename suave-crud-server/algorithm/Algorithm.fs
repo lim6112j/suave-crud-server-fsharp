@@ -99,7 +99,7 @@ module Algorithm =
     /// 0: BetaSkeleton, 1: Combination , default: Combination
     /// add more algorithm with modifying types for Algorithm in types/types.fs and here
     /// </summary>
-    let funcForAlgorithm algorithm theta' waypoints' demands' =
+    let executeSelcetedAlgorithm algorithm theta' waypoints' demands' =
         match algorithm with
         | (Algorithm.BetaSkeleton) ->
             getOptimalWaypointsWithTheta theta' waypoints' demands'

@@ -45,7 +45,7 @@ module OSRMRepository =
 
         async {
             let algorithmVar: Algorithm = enum algorithmParam
-            let responses = funcForAlgorithm algorithmVar theta waypoints demands
+            let responses = executeSelcetedAlgorithm algorithmVar theta waypoints demands
             return responses
         }
         |> Async.RunSynchronously
