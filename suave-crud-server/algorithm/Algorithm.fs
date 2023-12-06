@@ -38,7 +38,7 @@ module Algorithm =
             wps
         |> function
             | x when x.Length = wps.Length + dmds.Length -> Success x
-            | x -> Failure "demands insertion failed between waypoints"
+            | x -> Failure "demands insertion failed between waypoints accroding to theta"
 
     /// <summary>
     /// mobble beta-skeleton
