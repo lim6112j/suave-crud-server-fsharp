@@ -96,7 +96,7 @@ module Algorithm =
 
     /// <summary>
     /// select algorithm and run selected algorithm
-    /// 0: BetaSkeleton, 1: Combination , default: Combination
+    /// 0: BetaSkeleton, 1: CombinationWithTime, 2: CombinationWithDistance , default: CombinationWithTime
     /// add more algorithm with modifying types for Algorithm in types/types.fs and here
     /// </summary>
     let executeSelcetedAlgorithm algorithm theta' waypoints' demands' : Result<string, string> =
@@ -109,6 +109,17 @@ module Algorithm =
                 |> bind getFromAsyncHttp
             with _ ->
                 Failure "Beta skeleton waypoints optimzation failed"
+        | (Algorithm.CombinationWithDistance) ->
+            try
+                getCombinationOfWaypoints waypoints' demands'
+                |> Seq.map (fun r -> getUrl r)
+                |> Seq.map (fun r -> getFromAsyncHttp r)
+                |> Seq.map (fun r -> JsonSerializer.Deserialize<Response> r)
+                |> Seq.minBy (fun r -> r.routes[0].distance)
+                |> JsonSerializer.Serialize
+                |> Success
+            with _ ->
+                Failure "combination waypoints calculation failed"
         | _ ->
             try
                 getCombinationOfWaypoints waypoints' demands'

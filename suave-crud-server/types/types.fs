@@ -4,7 +4,8 @@ namespace SuaveAPI
 module Types =
     type Algorithm =
         | BetaSkeleton = 0
-        | Combination = 1
+        | CombinationWithTime = 1
+        | CombinationWithDistance = 2
 
     type Loc = { Lng: string; Lat: string }
 

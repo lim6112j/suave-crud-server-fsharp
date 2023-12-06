@@ -160,13 +160,14 @@ let ``input should contains 2 values bigger than theta`` () =
 
 [<Test>]
 let ``executeAlgorithm combination`` () =
-    let result = executeSelcetedAlgorithm Algorithm.Combination 90.0 waypoints demands
+    let result =
+        executeSelcetedAlgorithm Algorithm.CombinationWithTime 90.0 waypoints demands
     // printfn "%A" result
     Assert.True(true)
 
 [<Test>]
 let ``executeAlgorithm combination failed with empty waypoints`` () =
-    let result = executeSelcetedAlgorithm Algorithm.Combination 90.0 [] demands
+    let result = executeSelcetedAlgorithm Algorithm.CombinationWithTime 90.0 [] demands
 
     match result with
     | Failure f -> Assert.AreEqual(f, "combination waypoints calculation failed")
@@ -174,11 +175,20 @@ let ``executeAlgorithm combination failed with empty waypoints`` () =
 
 [<Test>]
 let ``executeAlgorithm combination failed with empty demands`` () =
-    let result = executeSelcetedAlgorithm Algorithm.Combination 90.0 waypoints []
+    let result =
+        executeSelcetedAlgorithm Algorithm.CombinationWithTime 90.0 waypoints []
 
     match result with
     | Failure f -> Assert.AreEqual(f, "combination waypoints calculation failed")
     | Success f -> Assert.True(false)
+
+[<Test>]
+let ``executeAlgorithm combination accroding to shortest distance `` () =
+    let result =
+        executeSelcetedAlgorithm Algorithm.CombinationWithDistance 90.0 waypoints demands
+
+    // printfn "%A" result
+    Assert.True(true)
 
 [<Test>]
 let ``executeAlgorithm betaskeleton`` () =
@@ -193,5 +203,5 @@ let ``executeAlgorithm betaskeleton demand insertion failed with Big theta const
     // printfn "%A" result
 
     match result with
-    | Failure f -> Assert.AreEqual(f, "demands insertion failed between waypoints")
+    | Failure f -> Assert.AreEqual(f, "demands insertion failed between waypoints accroding to theta")
     | Success f -> Assert.True(false)
