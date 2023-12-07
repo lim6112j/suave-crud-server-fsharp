@@ -87,11 +87,18 @@ module Utils =
 
         thetaOrigin * 180.0 / Math.PI
 
+    /// <summary>
+    /// http request
+    /// TODO cache
+    /// </summary>
     let getFromAsyncHttp (query: string) =
         use client = new HttpClient()
         let result = client.GetStringAsync(query).Result
         result
 
+    /// <summary>
+    ///  transform function into monadic function
+    /// </summary>
     let bind func optionInput =
         match optionInput with
         | Success x ->
