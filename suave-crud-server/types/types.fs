@@ -7,7 +7,13 @@ module Types =
         | CombinationWithTime = 1
         | CombinationWithDistance = 2
 
-    type Loc = { Lng: string; Lat: string }
+    type Loc =
+        { Lng: string
+          Lat: string }
+
+        override this.ToString() =
+            match this with
+            | { Lng = a; Lat = b } -> a + b
 
     type Result<'TSuccess, 'TFailure> =
         | Success of 'TSuccess

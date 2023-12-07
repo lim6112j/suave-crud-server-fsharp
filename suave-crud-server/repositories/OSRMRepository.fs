@@ -45,6 +45,7 @@ module OSRMRepository =
 
         async {
             let algorithmVar: Algorithm = enum algorithmParam
+            let executeSelcetedAlgorithm = memoize executeAlgorithm
             let responses = executeSelcetedAlgorithm algorithmVar theta waypoints demands
             return responses
         }

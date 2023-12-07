@@ -64,6 +64,8 @@ let actual =
       Lng = "127.0"
       Kind = "Both" }
 
+let executeSelcetedAlgorithm = memoize executeAlgorithm
+
 [<Test>]
 let ``algorithm record locwithkind test`` () =
     Assert.True(Reflection.FSharpType.IsRecord(actual.GetType()))
@@ -193,6 +195,13 @@ let ``executeAlgorithm combination accroding to shortest distance `` () =
 [<Test>]
 let ``executeAlgorithm betaskeleton`` () =
     let result = executeSelcetedAlgorithm Algorithm.BetaSkeleton 90.0 waypoints demands
+    // printfn "%A" result
+    Assert.True(true)
+
+[<Test>]
+let ``executeAlgorithm cache checking log for cache returns!!`` () =
+    let result = executeSelcetedAlgorithm Algorithm.BetaSkeleton 90.0 waypoints demands
+    let result2 = executeSelcetedAlgorithm Algorithm.BetaSkeleton 90.0 waypoints demands
     // printfn "%A" result
     Assert.True(true)
 

@@ -95,11 +95,33 @@ module Algorithm =
         |> printfn "getting vectorized waypoints %A\n"
 
     /// <summary>
+    /// memoize algorithm execution
+    /// </summary>
+    let memoize f =
+        let cache = System.Collections.Generic.Dictionary()
+
+        fun (algo: Algorithm) (theta': float) (waypoints': list<Loc>) (demands': list<Loc>) ->
+            let args =
+                (waypoints' @ demands')
+                |> List.map (fun r -> r.ToString())
+                |> System.String.Concat
+                |> fun r -> algo.ToString() + theta'.ToString() + r
+
+            match cache.TryGetValue(args) with
+            | true, v ->
+                printfn "cache returns!!"
+                v
+            | _ ->
+                let v = f algo theta' waypoints' demands'
+                cache.Add(args, v)
+                v
+
+    /// <summary>
     /// select algorithm and run selected algorithm
     /// 0: BetaSkeleton, 1: CombinationWithTime, 2: CombinationWithDistance , default: CombinationWithTime
     /// add more algorithm with modifying types for Algorithm in types/types.fs and here
     /// </summary>
-    let executeSelcetedAlgorithm algorithm theta' waypoints' demands' : Result<string, string> =
+    let executeAlgorithm (algorithm: Algorithm) (theta': float) (waypoints': list<Loc>) (demands': list<Loc>) =
         match algorithm with
         | (Algorithm.BetaSkeleton) ->
             try
