@@ -1,8 +1,9 @@
 OSRM:
     Server:
-        Host: http://localhost:5001/route/v1/driving/
+        Host: http://localhost:5000/route/v1/driving/
         Tail: ?overview=false
 DB:
-    ConnectionString: Data Source=server1;Initial Catalog=Database1;Integrated Security=SSPI;
+    # ConnectionString: Data Source=server1;Initial Catalog=Database1;Integrated Security=SSPI;
+    ConnectionString: Host=localhost;Database=moble;Username=postgres;Password=Vcc8tVfQRqmn4zfjM3wk
     NumberOfDeadlockRepeats: 5
     DefaultTimeout: 00:05:00

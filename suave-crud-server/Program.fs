@@ -54,8 +54,11 @@ module Program =
 
         let cancellationTokenSource = new CancellationTokenSource()
 
+        let customPort = 8085
+
         let webServerConfig =
             { defaultConfig with
+                bindings = [ HttpBinding.createSimple HTTP "0.0.0.0" customPort ]
                 cancellationToken = cancellationTokenSource.Token }
 
         let _, webServer = startWebServerAsync webServerConfig app

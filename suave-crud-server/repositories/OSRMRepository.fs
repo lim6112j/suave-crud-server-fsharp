@@ -35,18 +35,25 @@ module OSRMRepository =
     ///     "algorithm": 1
     /// }
     /// </summary>
-    let apiPostCall (param: OsrmReq) =
-
-        let waypoints = param.waypoints
-        let demands = param.demands
-        let algorithmParam = param.algorithm
-        let theta = 90 // TODO get from request
-
-
-        async {
-            let algorithmVar: Algorithm = enum algorithmParam
-            let executeSelcetedAlgorithm = memoize executeAlgorithm
+let apiPostCall (param: OsrmReq) =
+    let waypoints = param.waypoints
+    let demands = param.demands
+    let algorithmParam = param.algorithm
+    let theta = 90 // TODO get from request
+    async {
+        let algorithmVar: Algorithm = enum algorithmParam
+        let executeSelcetedAlgorithm = memoize executeAlgorithm
+        try
+            printfn "Executing algorithm with params: %A" param
             let responses = executeSelcetedAlgorithm algorithmVar theta waypoints demands
-            return responses
-        }
-        |> Async.RunSynchronously
+            printfn "Algorithm response: %A" responses
+            match responses with
+            | Success result -> return Success result
+            | Failure msg -> return Failure msg
+        with
+        | ex -> 
+            printfn "Error executing algorithm: %A" ex
+            return Failure "Internal server error"
+    }
+    |> Async.RunSynchronously
+

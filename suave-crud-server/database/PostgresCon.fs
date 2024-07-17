@@ -7,9 +7,8 @@ module PostgresCon =
     let connectionString: string =
         Sql.host "localhost"
         |> Sql.database "mobble"
-        // |> Sql.database "postgres"
         |> Sql.username "postgres"
-        |> Sql.password ""
+        |> Sql.password "Vcc8tVfQRqmn4zfjM3wk"
         |> Sql.port 5432
         |> Sql.formatConnectionString
 
