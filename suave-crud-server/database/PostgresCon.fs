@@ -1,16 +1,32 @@
 namespace SuaveAPI
 
 open Npgsql.FSharp
+open Microsoft.Extensions.Configuration
+open System.IO
+open NetEscapades.Configuration.Yaml
 
 [<AutoOpen>]
 module PostgresCon =
-    let connectionString: string =
-        Sql.host "localhost"
-        |> Sql.database "mobble"
-        |> Sql.username "postgres"
-        |> Sql.password "Vcc8tVfQRqmn4zfjM3wk"
-        |> Sql.port 5432
-        |> Sql.formatConnectionString
+    let configuration = 
+        ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddYamlFile("config.yaml", optional = false, reloadOnChange = true)
+            .AddEnvironmentVariables()
+            .Build()
+
+    let connectionString =
+        let configString = configuration.GetConnectionString("DefaultConnection")
+        if isNull configString then
+            Sql.host "localhost"
+            |> Sql.database "mobble"
+            |> Sql.username "postgres"
+            |> Sql.password "Vcc8tVfQRqmn4zfjM3wk"
+            |> Sql.port 5432
+            |> Sql.formatConnectionString
+        else
+            configString
+
+    printfn "Using connection string: %s" connectionString
 
     type Vstops =
         { Vstop_idx: int
