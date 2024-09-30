@@ -29,7 +29,7 @@ module Program =
         // printfn "%s" (Environment.GetEnvironmentVariable "PATH")
         // app settings (app.config)
         let config = YamlSettings()
-        printfn "%s" config.DB.ConnectionString
+        printfn "Default db config %s" config.DB.ConnectionString
 
 
         let osrmActions = osrmHandle "osrm" { postOSRM = OSRMRepository.apiPostCall }
@@ -54,12 +54,17 @@ module Program =
 
         let cancellationTokenSource = new CancellationTokenSource()
 
+        let customPort = 8085
+
         let webServerConfig =
             { defaultConfig with
+                bindings = [ HttpBinding.createSimple HTTP "0.0.0.0" customPort ]
                 cancellationToken = cancellationTokenSource.Token }
 
         let _, webServer = startWebServerAsync webServerConfig app
         Async.Start(webServer, cancellationTokenSource.Token) |> ignore
-        Console.ReadKey true |> ignore
+        // Console.ReadKey true |> ignore
+        while true do
+            Thread.Sleep(1000)
         cancellationTokenSource.Cancel()
         0
